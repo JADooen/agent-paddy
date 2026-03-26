@@ -632,7 +632,12 @@ Extract the answer.`;
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 256,
@@ -640,10 +645,18 @@ Extract the answer.`;
         messages: [{ role: 'user', content: prompt }]
       })
     });
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({error:{message:res.statusText}}));
+      const msg = err?.error?.message || res.statusText;
+      showToast('API error: ' + msg, false);
+      console.error('API error:', msg);
+      return null;
+    }
     const data = await res.json();
     const text = data.content?.[0]?.text || '{}';
     return JSON.parse(text.replace(/```json|```/g,'').trim());
   } catch (err) {
+    showToast('Network error — check connection', false);
     console.error(err);
     return null;
   }
