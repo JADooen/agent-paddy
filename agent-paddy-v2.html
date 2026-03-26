@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Agent Paddy">
+  <meta name="theme-color" content="#1b2f4d">
+  <title>Agent Paddy — J.T. Johnson & Sons</title>
+
+  <!-- PWA Manifest inline -->
+  <link rel="manifest" href="data:application/json,{
+    %22name%22:%22Agent%20Paddy%22,
+    %22short_name%22:%22Paddy%22,
+    %22start_url%22:%22.%22,
+    %22display%22:%22standalone%22,
+    %22background_color%22:%22%231b2f4d%22,
+    %22theme_color%22:%22%231b2f4d%22,
+    %22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231b2f4d'/%3E%3Ctext y='.9em' font-size='72' x='12'%3E%F0%9F%8C%BF%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]
+  }">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy:      #1b2f4d;
+      --green:     #11ab68;
+      --grey:      #626d7c;
+      --light:     #c4c8cc;
+      --white:     #ffffff;
+      --off-white: #f5f6f7;
+      --font-d: 'Nunito', sans-serif;
+      --font-b: 'Nunito Sans', sans-serif;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bot: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: var(--font-b);
+      background: var(--off-white);
+      color: var(--navy);
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      overscroll-behavior: none;
+    }
+
+    /* ── HEADER ── */
+    .hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: calc(10px + var(--safe-top)) 18px 12px;
+      background: var(--white);
+      border-bottom: 3px solid var(--green);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .hdr-logo  { font-family: var(--font-d); font-weight: 800; font-size: 0.88rem; color: var(--navy); }
+    .hdr-logo span { color: var(--green); }
+    .hdr-title { font-family: var(--font-d); font-weight: 800; font-size: 1rem; color: var(--navy); display:flex; align-items:center; gap:7px; }
+    .hdr-pill  { background: var(--green); color: white; padding: 2px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; }
+    .hdr-right { font-size: 0.75rem; color: var(--grey); text-align:right; }
+
+    /* ── TABS ── */
+    .tabs { display: flex; background: white; border-bottom: 2px solid var(--light); }
+    .tab  { flex: 1; padding: 11px 6px; text-align: center; font-family: var(--font-d); font-weight: 600; font-size: 0.82rem; color: var(--grey); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+    .tab.active { color: var(--navy); border-bottom-color: var(--green); }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ══════════════════════════════
+       HOME SCREEN
+    ══════════════════════════════ */
+    .home { max-width: 540px; margin: 0 auto; padding: 20px 16px calc(20px + var(--safe-bot)); }
+
+    .hero {
+      background: var(--navy); border-radius: 20px;
+      padding: 30px 24px 26px; text-align: center; margin-bottom: 16px;
+    }
+    .hero-icon { font-size: 3.2rem; margin-bottom: 8px; }
+    .hero h1   { font-family: var(--font-d); font-size: 1.9rem; font-weight: 800; color: var(--green); margin-bottom: 5px; }
+    .hero p    { color: var(--light); font-size: 0.86rem; line-height: 1.55; margin-bottom: 22px; }
+
+    .btn-primary {
+      display: block; width: 100%; background: var(--green); color: white;
+      border: none; border-radius: 14px; padding: 16px;
+      font-family: var(--font-d); font-weight: 800; font-size: 1.05rem;
+      cursor: pointer; transition: background 0.2s; margin-bottom: 10px;
+    }
+    .btn-primary:active { background: #0d9057; }
+
+    .btn-secondary {
+      display: block; width: 100%; background: transparent; color: white;
+      border: 2px solid rgba(255,255,255,0.25); border-radius: 14px; padding: 14px;
+      font-family: var(--font-d); font-weight: 700; font-size: 0.95rem;
+      cursor: pointer; transition: border-color 0.2s; margin-bottom: 0;
+    }
+    .btn-secondary:active { border-color: var(--green); }
+
+    .info-card {
+      background: white; border-radius: 14px; padding: 18px 20px;
+      border-left: 4px solid var(--navy); margin-bottom: 12px;
+    }
+    .info-card h3 { font-family: var(--font-d); font-weight: 700; margin-bottom: 9px; }
+    .info-card p  { font-size: 0.84rem; color: var(--grey); line-height: 1.65; }
+    .info-card li { font-size: 0.84rem; color: var(--grey); line-height: 2; }
+
+    /* API key input */
+    .api-card { background: white; border-radius: 14px; padding: 18px 20px; border-left: 4px solid var(--green); margin-bottom: 12px; }
+    .api-card h3 { font-family: var(--font-d); font-weight: 700; margin-bottom: 9px; font-size: 0.95rem; }
+    .api-input {
+      width: 100%; padding: 11px 13px; border: 2px solid var(--light);
+      border-radius: 10px; font-family: var(--font-b); font-size: 0.88rem;
+      color: var(--navy); outline: none; margin-bottom: 8px;
+    }
+    .api-input:focus { border-color: var(--green); }
+    .api-save {
+      background: var(--navy); color: white; border: none; border-radius: 10px;
+      padding: 10px 18px; font-family: var(--font-d); font-weight: 700;
+      font-size: 0.85rem; cursor: pointer;
+    }
+    .api-status { font-size: 0.78rem; margin-top: 5px; }
+    .api-status.ok  { color: var(--green); }
+    .api-status.err { color: #e53e3e; }
+
+    /* ══════════════════════════════
+       CHAT / VOICE SCREEN
+    ══════════════════════════════ */
+    .chat-screen {
+      display: none;
+      flex-direction: column;
+      height: calc(100vh - 98px);
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    .chat-screen.active { display: flex; }
+
+    /* progress */
+    .chat-progress { padding: 10px 16px 6px; background: var(--white); border-bottom: 1px solid var(--off-white); }
+    .prog-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--grey); margin-bottom: 5px; }
+    .prog-section { font-family: var(--font-d); font-weight: 700; color: var(--navy); font-size: 0.75rem; }
+    .prog-bar  { background: var(--light); border-radius: 6px; height: 5px; }
+    .prog-fill { height: 100%; background: var(--green); border-radius: 6px; transition: width 0.5s ease; }
+
+    /* messages */
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 14px 14px 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .msg { display: flex; gap: 10px; margin-bottom: 14px; animation: msgIn 0.25s ease; }
+    @keyframes msgIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform:none; } }
+
+    .msg.paddy  { flex-direction: row; }
+    .msg.user   { flex-direction: row-reverse; }
+
+    .msg-avatar {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+    }
+    .msg.paddy .msg-avatar { background: var(--navy); }
+    .msg.user  .msg-avatar { background: var(--green); }
+
+    .msg-bubble {
+      max-width: 75%; padding: 11px 14px; border-radius: 16px;
+      font-size: 0.9rem; line-height: 1.5;
+    }
+    .msg.paddy .msg-bubble {
+      background: white; color: var(--navy);
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 8px rgba(27,47,77,0.07);
+      font-family: var(--font-b);
+    }
+    .msg.user .msg-bubble {
+      background: var(--navy); color: white;
+      border-bottom-right-radius: 4px;
+      font-family: var(--font-b);
+    }
+    .msg-bubble strong { font-family: var(--font-d); }
+
+    /* typing indicator */
+    .typing-dots { display: flex; gap: 4px; padding: 4px 2px; align-items: center; }
+    .typing-dots span {
+      width: 7px; height: 7px; background: var(--light); border-radius: 50%;
+      animation: dot-bounce 1.2s infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dot-bounce {
+      0%,80%,100% { transform: scale(0.7); opacity:0.5; }
+      40%          { transform: scale(1);   opacity:1;   }
+    }
+
+    /* ── MIC AREA ── */
+    .mic-area {
+      padding: 12px 16px calc(12px + var(--safe-bot));
+      background: white; border-top: 2px solid var(--off-white);
+    }
+
+    .mic-status {
+      text-align: center; font-size: 0.78rem; color: var(--grey);
+      margin-bottom: 10px; min-height: 16px; font-family: var(--font-b);
+    }
+    .mic-status.listening { color: var(--green); font-weight: 600; }
+    .mic-status.thinking  { color: var(--navy);  font-weight: 600; }
+
+    /* waveform */
+    .waveform { display: flex; align-items: center; justify-content: center; gap: 4px; height: 40px; margin-bottom: 12px; }
+    .w-bar { width: 4px; background: var(--light); border-radius: 3px; height: 6px; transition: background 0.2s; }
+    .waveform.active .w-bar { background: var(--green); animation: w-anim 0.7s ease-in-out infinite; }
+    .waveform.thinking .w-bar { background: var(--navy); animation: w-anim 1.4s ease-in-out infinite; }
+    .w-bar:nth-child(1){animation-delay:0s}   .w-bar:nth-child(2){animation-delay:.07s}
+    .w-bar:nth-child(3){animation-delay:.14s} .w-bar:nth-child(4){animation-delay:.21s}
+    .w-bar:nth-child(5){animation-delay:.28s} .w-bar:nth-child(6){animation-delay:.21s}
+    .w-bar:nth-child(7){animation-delay:.14s} .w-bar:nth-child(8){animation-delay:.07s}
+    .w-bar:nth-child(9){animation-delay:0s}
+    @keyframes w-anim { 0%,100%{height:5px} 50%{height:30px} }
+
+    .mic-row { display: flex; align-items: center; justify-content: center; gap: 16px; }
+
+    .mic-btn {
+      width: 80px; height: 80px; border-radius: 50%; background: var(--green);
+      border: none; color: white; font-size: 2rem; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(17,171,104,0.4); transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .mic-btn.listening { background: #e53e3e; box-shadow: 0 6px 24px rgba(229,62,62,0.4); animation: mic-pulse 1s infinite; }
+    .mic-btn.thinking  { background: var(--navy); box-shadow: 0 6px 24px rgba(27,47,77,0.3); }
+    .mic-btn:disabled  { opacity: 0.4; }
+    @keyframes mic-pulse {
+      0%,100%{ box-shadow: 0 0 0 0 rgba(229,62,62,0.5); }
+      50%    { box-shadow: 0 0 0 18px rgba(229,62,62,0); }
+    }
+
+    .mic-side-btn {
+      width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--light);
+      background: white; color: var(--grey); font-size: 1.1rem; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mic-side-btn:active { border-color: var(--navy); color: var(--navy); }
+
+    /* manual input */
+    .manual-row { display: flex; gap: 8px; margin-top: 10px; }
+    .manual-input {
+      flex: 1; padding: 11px 13px; border: 2px solid var(--light); border-radius: 12px;
+      font-family: var(--font-b); font-size: 0.92rem; color: var(--navy); outline: none;
+    }
+    .manual-input:focus { border-color: var(--green); }
+    .manual-send {
+      background: var(--green); color: white; border: none; border-radius: 12px;
+      padding: 0 18px; font-size: 1.2rem; cursor: pointer;
+    }
+    .manual-row { display: none; }
+    .manual-row.show { display: flex; }
+
+    /* ══════════════════════════════
+       REVIEW SCREEN
+    ══════════════════════════════ */
+    .review { max-width: 540px; margin: 0 auto; padding: 16px 16px calc(24px + var(--safe-bot)); }
+    .review-hdr { background: var(--navy); color: white; border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; }
+    .review-hdr h2 { font-family: var(--font-d); font-weight: 800; font-size: 1.1rem; }
+    .review-hdr p  { font-size: 0.8rem; color: var(--light); margin-top: 3px; }
+
+    .rev-section { margin-bottom: 12px; }
+    .rev-sec-title { font-family: var(--font-d); font-weight: 700; font-size: 0.7rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.5px; padding: 0 2px; margin-bottom: 5px; }
+    .rev-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: white; border-bottom: 1px solid var(--off-white); }
+    .rev-row:first-of-type { border-radius: 12px 12px 0 0; }
+    .rev-row:last-of-type  { border-radius: 0 0 12px 12px; border-bottom: none; }
+    .rev-row:only-of-type  { border-radius: 12px; }
+    .rev-label { font-size: 0.8rem; color: var(--grey); flex: 1; }
+    .rev-val   { font-family: var(--font-d); font-weight: 700; font-size: 0.88rem; color: var(--navy); max-width: 55%; text-align: right; }
+    .rev-val.y  { color: #0d7a4a; } .rev-val.n { color: #c0392b; } .rev-val.e { color: var(--light); font-weight: 400; font-style: italic; }
+
+    .rev-actions { display: flex; gap: 10px; padding-top: 4px; }
+    .btn-save { flex: 1; background: var(--green); color: white; border: none; border-radius: 14px; padding: 16px; font-family: var(--font-d); font-weight: 800; font-size: 1rem; cursor: pointer; }
+    .btn-edit { flex: 0 0 auto; background: white; color: var(--navy); border: 2px solid var(--light); border-radius: 14px; padding: 14px 18px; font-family: var(--font-d); font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+
+    /* ══════════════════════════════
+       RECORDS SCREEN
+    ══════════════════════════════ */
+    .records { padding: 14px 16px calc(20px + var(--safe-bot)); }
+    .rec-toolbar { display: flex; gap: 9px; margin-bottom: 14px; flex-wrap: wrap; }
+    .btn-sm { padding: 9px 15px; border-radius: 10px; font-family: var(--font-d); font-weight: 700; font-size: 0.82rem; cursor: pointer; border: none; }
+    .btn-sm.grn  { background: var(--green); color: white; }
+    .btn-sm.nvy  { background: var(--navy);  color: white; }
+    .btn-sm.red  { background: white; color: #c0392b; border: 2px solid #e5b8b5; }
+
+    .tbl-wrap { border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(27,47,77,0.08); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; background: white; min-width: 600px; }
+    th { background: var(--navy); color: white; padding: 10px 12px; text-align: left; font-family: var(--font-d); font-weight: 700; font-size: 0.76rem; white-space: nowrap; }
+    td { padding: 9px 12px; border-bottom: 1px solid var(--off-white); font-size: 0.8rem; white-space: nowrap; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--off-white); }
+    .del-btn { background: none; border: 1px solid var(--light); border-radius: 6px; padding: 3px 8px; font-size: 0.73rem; color: var(--grey); cursor: pointer; }
+    .del-btn:hover { color: #e53e3e; border-color: #e5b8b5; }
+
+    .empty { text-align: center; padding: 50px 20px; color: var(--grey); }
+    .empty .ei { font-size: 2.8rem; margin-bottom: 10px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: calc(22px + var(--safe-bot)); left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: var(--navy); color: white; padding: 11px 22px;
+      border-radius: 12px; font-family: var(--font-d); font-weight: 600;
+      font-size: 0.85rem; transition: transform 0.3s; z-index: 9999; white-space: nowrap;
+    }
+    .toast.show    { transform: translateX(-50%) translateY(0); }
+    .toast.success { background: var(--green); }
+
+    /* ── INSTALL BANNER ── */
+    .install-banner {
+      display: none; background: var(--navy); color: white;
+      padding: 12px 16px; align-items: center; gap: 12px;
+    }
+    .install-banner.show { display: flex; }
+    .install-banner p  { font-size: 0.82rem; flex: 1; line-height: 1.4; }
+    .install-banner p strong { font-family: var(--font-d); color: var(--green); }
+    .install-btn { background: var(--green); color: white; border: none; border-radius: 8px; padding: 8px 14px; font-family: var(--font-d); font-weight: 700; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
+    .install-close { background: none; border: none; color: var(--light); font-size: 1.2rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<!-- ── INSTALL BANNER (iOS) ── -->
+<div class="install-banner" id="installBanner">
+  <p><strong>Add to Home Screen</strong> — tap Share then "Add to Home Screen" for the full app experience</p>
+  <button class="install-close" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
+</div>
+
+<!-- ── HEADER ── -->
+<div class="hdr">
+  <div class="hdr-logo">J.T. Johnson <span>&</span> Sons</div>
+  <div class="hdr-title">Agent Paddy <span class="hdr-pill" id="hdrPill">Ready</span></div>
+  <div class="hdr-right" id="hdrRight">Paddock Inspector</div>
+</div>
+
+<!-- ── TABS ── -->
+<div class="tabs">
+  <div class="tab active" data-tab="home"    onclick="goTab('home')">🌿 Inspect</div>
+  <div class="tab"        data-tab="records" onclick="goTab('records')">📋 Records <span id="recCount"></span></div>
+</div>
+
+<!-- ══════════════════════════
+     HOME SCREEN
+══════════════════════════ -->
+<div id="screen-home" class="screen active">
+  <div class="home">
+    <div class="hero">
+      <div class="hero-icon">🌾</div>
+      <h1>Agent Paddy</h1>
+      <p>Hands-free paddock inspection powered by Claude AI.<br>Talk naturally — Paddy understands.</p>
+      <button class="btn-primary" onclick="startInspection()">🎤 Start Inspection</button>
+      <button class="btn-secondary" onclick="goTab('records')">View Saved Records</button>
+    </div>
+
+    <div class="api-card">
+      <h3>🔑 Anthropic API Key</h3>
+      <input type="password" class="api-input" id="apiKeyInput" placeholder="sk-ant-api03-..." />
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="api-save" onclick="saveApiKey()">Save Key</button>
+        <span class="api-status" id="apiStatus"></span>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>How Paddy works</h3>
+      <p>Paddy asks each question out loud. Tap the big green mic and speak naturally — say as much or as little as you like. Claude AI understands your answer and fills in the form automatically. Fully hands-free from the car.</p>
+    </div>
+
+    <div class="info-card" style="border-left-color: var(--green);">
+      <h3>📱 Add to Home Screen</h3>
+      <ol style="padding-left:16px;">
+        <li>Open in <strong>Safari</strong> on your iPhone</li>
+        <li>Tap the <strong>Share</strong> button (box with arrow)</li>
+        <li>Tap <strong>"Add to Home Screen"</strong></li>
+        <li>Paddy appears as an app icon — no App Store needed</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     CHAT / VOICE SCREEN
+══════════════════════════ -->
+<div id="screen-voice" class="screen">
+  <div class="chat-progress">
+    <div class="prog-row">
+      <span class="prog-section" id="progSection">Visit Info</span>
+      <span id="progText">1 of 30</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:3%"></div></div>
+  </div>
+
+  <div class="chat-screen" id="chatScreen">
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="mic-area">
+      <div class="mic-status" id="micStatus">Tap the mic to answer</div>
+
+      <div class="waveform" id="waveform">
+        <div class="w-bar"></div><div class="w-bar"></div><div class="w-bar"></div>
+        <div class="w-bar"></div><div class="w-bar"></div><div class="w-bar"></div>
+        <div class="w-bar"></div><div class="w-bar"></div><div class="w-bar"></div>
+      </div>
+
+      <div class="mic-row">
+        <button class="mic-side-btn" onclick="skipQuestion()" title="Skip">⏭</button>
+        <button class="mic-btn" id="micBtn" onclick="toggleMic()">🎤</button>
+        <button class="mic-side-btn" onclick="toggleManual()" title="Type instead">⌨️</button>
+      </div>
+
+      <div class="manual-row" id="manualRow">
+        <input type="text" class="manual-input" id="manualInput" placeholder="Type your answer…" onkeydown="if(event.key==='Enter')sendManual()">
+        <button class="manual-send" onclick="sendManual()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     REVIEW SCREEN
+══════════════════════════ -->
+<div id="screen-review" class="screen">
+  <div class="review">
+    <div class="review-hdr">
+      <h2>Review Inspection</h2>
+      <p id="revSubtitle">Check before saving</p>
+    </div>
+    <div id="revContent"></div>
+    <div class="rev-actions" style="margin-top:12px;">
+      <button class="btn-save" onclick="saveInspection()">💾 Save Inspection</button>
+      <button class="btn-edit" onclick="goTab('voice')">✏️ Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     RECORDS SCREEN
+══════════════════════════ -->
+<div id="screen-records" class="screen">
+  <div class="records">
+    <div class="rec-toolbar">
+      <button class="btn-sm nvy" onclick="goTab('home')">+ New</button>
+      <button class="btn-sm grn" onclick="exportCSV()">📊 Export CSV</button>
+      <button class="btn-sm red" onclick="confirmClearAll()">🗑 Clear All</button>
+    </div>
+    <div id="recContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     SCRIPT
+══════════════════════════════════════════════════════ -->
+<script>
+// ──────────────────────────────────────────────────────
+// QUESTION SCHEMA (maps 1:1 to hard-copy form)
+// ──────────────────────────────────────────────────────
+const QUESTIONS = [
+  { id:'visitNumber',     label:'Visit Number',          section:'Visit Info',            type:'choice' },
+  { id:'inspectorName',   label:'Inspector Name',         section:'Visit Info',            type:'text'   },
+  { id:'inspectionDate',  label:'Inspection Date',        section:'Visit Info',            type:'date'   },
+  { id:'growerName',      label:'Grower Name',            section:'Visit Info',            type:'text'   },
+  { id:'argtNo',          label:'ARGT Number',            section:'Visit Info',            type:'text'   },
+  { id:'paddockName',     label:'Paddock Name',           section:'Visit Info',            type:'text'   },
+  { id:'lastYearsCrop',   label:"Last Year's Crop",       section:'Visit Info',            type:'text'   },
+  { id:'otherSpecies',    label:'Other Species',          section:'Visit Info',            type:'text'   },
+  { id:'wheatPct',        label:'Wheat %',                section:'Species Composition',   type:'percent'},
+  { id:'barleyPct',       label:'Barley %',               section:'Species Composition',   type:'percent'},
+  { id:'legumesPct',      label:'Legumes %',              section:'Species Composition',   type:'percent'},
+  { id:'ryegrassPct',     label:'Ryegrass %',             section:'Species Composition',   type:'percent'},
+  { id:'weedsPct',        label:'Weeds %',                section:'Species Composition',   type:'percent'},
+  { id:'weedsList',       label:'Weeds List',             section:'Species Composition',   type:'text'   },
+  { id:'recommendChina',  label:'Recommend for China',    section:'Recommendations',       type:'yn'     },
+  { id:'propoconozole',   label:'Propoconozole Applied',  section:'Recommendations',       type:'yn'     },
+  { id:'weedmasterDST',   label:'Weedmaster DST Applied', section:'Recommendations',       type:'yn'     },
+  { id:'knockdown',       label:'Knockdown Applied',      section:'Recommendations',       type:'yn'     },
+  { id:'sowingRate',      label:'Sowing Rate (kg/Ha)',    section:'Sowing',                type:'number' },
+  { id:'rolled',          label:'Rolled',                 section:'Paddock Condition',     type:'yn'     },
+  { id:'rocks',           label:'Rocks Present',          section:'Paddock Condition',     type:'yn'     },
+  { id:'dirtClods',       label:'Dirt Clods',             section:'Paddock Condition',     type:'yn'     },
+  { id:'fencesRemoved',   label:'Fences Removed',         section:'Paddock Condition',     type:'yn'     },
+  { id:'oldStubble',      label:'Old Stubble',            section:'Paddock Condition',     type:'yn'     },
+  { id:'rotaryRake',      label:'Rotary Rake',            section:'Paddock Practices',     type:'yn'     },
+  { id:'squeezed',        label:'Squeezed',               section:'Paddock Practices',     type:'yn'     },
+  { id:'chopped',         label:'Chopped',                section:'Paddock Practices',     type:'yn'     },
+  { id:'innoculant',      label:'Innoculant Applied',     section:'Paddock Practices',     type:'yn'     },
+  { id:'otherConditions', label:'Other Conditions',       section:'Other',                 type:'text'   },
+  { id:'comments',        label:'Comments',               section:'Other',                 type:'text'   },
+];
+
+const FIELD_QUESTIONS = {
+  visitNumber:    "Which visit number is this? 1, 2, 3 or 4?",
+  inspectorName:  "What is your name?",
+  inspectionDate: "What is today's date? You can just say 'today'.",
+  growerName:     "What is the grower's name?",
+  argtNo:         "What is the ARGT number for this paddock?",
+  paddockName:    "What is the name of this paddock?",
+  lastYearsCrop:  "What crop was grown here last year?",
+  otherSpecies:   "Are there any other species present? Say 'none' if not.",
+  wheatPct:       "What percentage of the paddock is wheat?",
+  barleyPct:      "What percentage is barley?",
+  legumesPct:     "What percentage is legumes?",
+  ryegrassPct:    "What percentage is ryegrass?",
+  weedsPct:       "What percentage is weeds?",
+  weedsList:      "List any weed species present. Say 'none' if there are none.",
+  recommendChina: "Do you recommend this paddock for China?",
+  propoconozole:  "Has Propoconozole been applied?",
+  weedmasterDST:  "Has Weedmaster DST been applied?",
+  knockdown:      "Has Knockdown been applied?",
+  sowingRate:     "What is the sowing rate in kilograms per hectare?",
+  rolled:         "Has the paddock been rolled?",
+  rocks:          "Are there rocks present?",
+  dirtClods:      "Are there dirt clods present?",
+  fencesRemoved:  "Have fences been removed?",
+  oldStubble:     "Is there old stubble present?",
+  rotaryRake:     "Has a rotary rake been used?",
+  squeezed:       "Has the paddock been squeezed?",
+  chopped:        "Has the paddock been chopped?",
+  innoculant:     "Has innoculant been applied?",
+  otherConditions:"Any other conditions or foreign objects to note? Say 'none' if not.",
+  comments:       "Any final comments about the paddock or crop conditions?",
+};
+
+// ──────────────────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────────────────
+let answers    = {};
+let currentQ   = 0;
+let recognition = null;
+let isRecording = false;
+let isBusy      = false;
+
+// ──────────────────────────────────────────────────────
+// INDEXEDDB
+// ──────────────────────────────────────────────────────
+let db;
+function initDB() {
+  return new Promise((res,rej)=>{
+    const r = indexedDB.open('AgentPaddyV2', 1);
+    r.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('inspections')) {
+        d.createObjectStore('inspections',{ keyPath:'id', autoIncrement:true });
+      }
+    };
+    r.onsuccess = e => { db = e.target.result; res(); };
+    r.onerror   = e => rej(e.target.error);
+  });
+}
+const dbAll   = ()=> new Promise((res,rej)=>{ const r=db.transaction('inspections','readonly').objectStore('inspections').getAll(); r.onsuccess=()=>res(r.result); r.onerror=rej; });
+const dbAdd   = rec => new Promise((res,rej)=>{ const r=db.transaction('inspections','readwrite').objectStore('inspections').add(rec); r.onsuccess=()=>res(r.result); r.onerror=rej; });
+const dbDel   = id  => new Promise((res,rej)=>{ const r=db.transaction('inspections','readwrite').objectStore('inspections').delete(id); r.onsuccess=res; r.onerror=rej; });
+const dbClear = ()  => new Promise((res,rej)=>{ const r=db.transaction('inspections','readwrite').objectStore('inspections').clear(); r.onsuccess=res; r.onerror=rej; });
+
+// ──────────────────────────────────────────────────────
+// API KEY
+// ──────────────────────────────────────────────────────
+function saveApiKey() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if (!k.startsWith('sk-ant')) { setApiStatus('Invalid key format', false); return; }
+  localStorage.setItem('paddy_api_key', k);
+  setApiStatus('✅ Key saved', true);
+  document.getElementById('apiKeyInput').value = '';
+}
+function getApiKey() { return localStorage.getItem('paddy_api_key') || ''; }
+function setApiStatus(msg, ok) {
+  const el = document.getElementById('apiStatus');
+  el.textContent = msg;
+  el.className = 'api-status ' + (ok ? 'ok' : 'err');
+}
+
+// Load saved key hint
+window.addEventListener('load', ()=>{
+  const k = getApiKey();
+  if (k) setApiStatus('✅ API key saved', true);
+});
+
+// ──────────────────────────────────────────────────────
+// TTS
+// ──────────────────────────────────────────────────────
+function speak(text, onEnd) {
+  if (!window.speechSynthesis) { onEnd && onEnd(); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-AU'; u.rate = 0.9;
+  if (onEnd) u.onend = onEnd;
+  window.speechSynthesis.speak(u);
+}
+
+// ──────────────────────────────────────────────────────
+// CLAUDE API
+// ──────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are Agent Paddy, a paddock inspection assistant for J.T. Johnson & Sons.
+You are processing a paddock inspection form. You will receive voice transcripts from an inspector in the field (often from a car, so speech may be casual or include background noise).
+
+Your job: extract the answer to the current question and return ONLY a JSON object.
+
+Return format:
+{
+  "extracted": "the clean extracted value",
+  "display": "human readable version for the form",
+  "confidence": "high|medium|low",
+  "clarification": null or "follow-up question if unclear"
+}
+
+Rules:
+- For yes/no questions: return "Y" or "N" in extracted. Display "Yes" or "No".
+- For percentages: return just the number e.g. "45" not "45%". Display as "45%".
+- For dates: if they say "today" return today's date in DD/MM/YYYY format. Today is ${new Date().toLocaleDateString('en-AU')}.
+- For visit number: extract 1, 2, 3 or 4.
+- For sowing rate: extract the number only.
+- For text fields: clean up the transcript naturally, proper case.
+- If the answer is clearly "none" or "nothing", return "None".
+- If confidence is low or the answer is ambiguous, set clarification to a short follow-up question.
+- Never return anything except the JSON object. No preamble, no backticks.`;
+
+async function claudeExtract(questionId, questionText, userSpeech) {
+  const key = getApiKey();
+  if (!key) { showToast('Add your API key first', false); return null; }
+
+  const prompt = `Current question: "${questionText}"
+Field type: ${QUESTIONS.find(q=>q.id===questionId)?.type || 'text'}
+Inspector said: "${userSpeech}"
+
+Extract the answer.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 256,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '{}';
+    return JSON.parse(text.replace(/```json|```/g,'').trim());
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+// ──────────────────────────────────────────────────────
+// CHAT UI
+// ──────────────────────────────────────────────────────
+function addMsg(role, html, isTyping=false) {
+  const el = document.createElement('div');
+  el.className = 'msg ' + role;
+  const avatar = role === 'paddy' ? '🌿' : '🎤';
+  if (isTyping) {
+    el.id = 'typingMsg';
+    el.innerHTML = `<div class="msg-avatar">${avatar}</div>
+      <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  } else {
+    el.innerHTML = `<div class="msg-avatar">${avatar}</div><div class="msg-bubble">${html}</div>`;
+  }
+  document.getElementById('chatMessages').appendChild(el);
+  el.scrollIntoView({ behavior:'smooth', block:'end' });
+  return el;
+}
+function removeTyping() { document.getElementById('typingMsg')?.remove(); }
+
+// ──────────────────────────────────────────────────────
+// INSPECTION FLOW
+// ──────────────────────────────────────────────────────
+function startInspection() {
+  if (!getApiKey()) { showToast('Please enter your API key first', false); return; }
+  answers  = {};
+  currentQ = 0;
+  document.getElementById('chatMessages').innerHTML = '';
+  goTab('voice');
+  setTimeout(askCurrentQuestion, 400);
+}
+
+function askCurrentQuestion() {
+  const q   = QUESTIONS[currentQ];
+  const txt = FIELD_QUESTIONS[q.id];
+
+  // Progress
+  const pct = Math.round((currentQ / QUESTIONS.length) * 100);
+  document.getElementById('progSection').textContent = q.section;
+  document.getElementById('progText').textContent    = `${currentQ+1} of ${QUESTIONS.length}`;
+  document.getElementById('progFill').style.width    = pct + '%';
+  document.getElementById('hdrPill').textContent     = `${currentQ+1}/${QUESTIONS.length}`;
+
+  // Add Paddy message
+  addMsg('paddy', `<strong>${q.label}</strong><br>${txt}`);
+
+  // Speak it
+  setMicState('idle');
+  speak(txt, () => setMicState('ready'));
+}
+
+function setMicState(state) {
+  const btn      = document.getElementById('micBtn');
+  const status   = document.getElementById('micStatus');
+  const waveform = document.getElementById('waveform');
+
+  btn.disabled = false;
+  waveform.className = 'waveform';
+
+  if (state === 'idle') {
+    btn.className = 'mic-btn'; btn.textContent = '🔊';
+    status.className = 'mic-status'; status.textContent = 'Paddy is speaking…';
+    btn.disabled = true;
+  } else if (state === 'ready') {
+    btn.className = 'mic-btn'; btn.textContent = '🎤';
+    status.className = 'mic-status'; status.textContent = 'Tap the mic to answer';
+  } else if (state === 'listening') {
+    btn.className = 'mic-btn listening'; btn.textContent = '⏹';
+    status.className = 'mic-status listening'; status.textContent = 'Listening… tap to stop';
+    waveform.classList.add('active');
+  } else if (state === 'thinking') {
+    btn.className = 'mic-btn thinking'; btn.textContent = '💭';
+    btn.disabled = true;
+    status.className = 'mic-status thinking'; status.textContent = 'Paddy is processing…';
+    waveform.classList.add('thinking');
+  }
+}
+
+// ──────────────────────────────────────────────────────
+// MIC
+// ──────────────────────────────────────────────────────
+function toggleMic() {
+  if (isBusy) return;
+  if (isRecording) stopMic(); else startMic();
+}
+
+function startMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast('Mic not supported — tap ⌨️ to type', false); return; }
+
+  recognition = new SR();
+  recognition.lang = 'en-AU';
+  recognition.interimResults = true;
+  recognition.continuous = false;
+  recognition.maxAlternatives = 1;
+
+  isRecording = true;
+  setMicState('listening');
+
+  let final = '';
+  recognition.onresult = e => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) final += t; else interim += t;
+    }
+    document.getElementById('micStatus').textContent = final || interim || 'Listening…';
+  };
+
+  recognition.onend = () => {
+    isRecording = false;
+    const said = document.getElementById('micStatus').textContent;
+    if (!final && (said === 'Listening…' || said === 'Tap the mic to answer')) {
+      setMicState('ready');
+      showToast('Nothing heard — try again', false);
+      return;
+    }
+    processUserAnswer(final || said);
+  };
+
+  recognition.onerror = e => {
+    isRecording = false;
+    setMicState('ready');
+    if (e.error !== 'no-speech') showToast('Mic error: ' + e.error, false);
+  };
+
+  recognition.start();
+}
+
+function stopMic() { recognition?.stop(); }
+
+// ──────────────────────────────────────────────────────
+// PROCESS ANSWER
+// ──────────────────────────────────────────────────────
+async function processUserAnswer(transcript) {
+  isBusy = true;
+  setMicState('thinking');
+
+  const q = QUESTIONS[currentQ];
+
+  // Show user msg
+  addMsg('user', transcript);
+
+  // Typing indicator
+  addMsg('paddy', '', true);
+
+  // Claude extraction
+  const result = await claudeExtract(q.id, FIELD_QUESTIONS[q.id], transcript);
+  removeTyping();
+
+  if (!result) {
+    addMsg('paddy', "Sorry, I had trouble understanding that. Could you try again?");
+    speak("Sorry, I had trouble. Could you try again?", () => setMicState('ready'));
+    isBusy = false; return;
+  }
+
+  // Store answer
+  answers[q.id] = result.extracted;
+
+  // Needs clarification?
+  if (result.confidence === 'low' && result.clarification) {
+    const clarMsg = result.clarification;
+    addMsg('paddy', `Got <strong>${result.display}</strong> — ${clarMsg}`);
+    // Still save what we have, move on after clarification
+    speak(`Got ${result.display}. ${clarMsg}`, () => {
+      isBusy = false; setMicState('ready');
+    });
+    return;
+  }
+
+  // Confirmed — show and move to next
+  const confirmMsg = buildConfirmMsg(q, result.display);
+  addMsg('paddy', confirmMsg);
+  speak(confirmMsg.replace(/<[^>]+>/g,''), ()=>{
+    isBusy = false;
+    advanceQuestion();
+  });
+}
+
+function buildConfirmMsg(q, display) {
+  const type = q.type;
+  if (type === 'yn')      return display === 'Yes' ? `✅ Got it — <strong>Yes</strong>` : `❌ Got it — <strong>No</strong>`;
+  if (type === 'percent') return `Got <strong>${display}</strong>`;
+  return `Got it — <strong>${display || '—'}</strong>`;
+}
+
+function advanceQuestion() {
+  if (currentQ < QUESTIONS.length - 1) {
+    currentQ++;
+    setTimeout(askCurrentQuestion, 500);
+  } else {
+    finishInspection();
+  }
+}
+
+function skipQuestion() {
+  if (isBusy) return;
+  answers[QUESTIONS[currentQ].id] = '';
+  addMsg('paddy', `<em>Skipped ${QUESTIONS[currentQ].label}</em>`);
+  advanceQuestion();
+}
+
+function finishInspection() {
+  addMsg('paddy', `🎉 <strong>All done!</strong> Let me show you a summary to review before saving.`);
+  speak('All done! Here is your summary.', ()=>{
+    setTimeout(()=>{ showReview(); goTab('review'); }, 600);
+  });
+}
+
+// ──────────────────────────────────────────────────────
+// REVIEW
+// ──────────────────────────────────────────────────────
+function showReview() {
+  document.getElementById('revSubtitle').textContent =
+    `${answers.paddockName||'Paddock'} — ${answers.inspectionDate||'No date'}`;
+
+  let html = ''; let section = '';
+  QUESTIONS.forEach(q => {
+    if (q.section !== section) {
+      if (section) html += '</div></div>';
+      section = q.section;
+      html += `<div class="rev-section"><div class="rev-sec-title">${q.section}</div><div>`;
+    }
+    const val = answers[q.id];
+    const cls = !val ? 'e' : q.type === 'yn' ? (val==='Y'?'y':'n') : '';
+    let display = val || '—';
+    if (q.type === 'yn' && val) display = val === 'Y' ? '✅ Yes' : '❌ No';
+    if (q.type === 'percent' && val && !val.includes('%')) display = val + '%';
+    html += `<div class="rev-row"><span class="rev-label">${q.label}</span><span class="rev-val ${cls}">${display}</span></div>`;
+  });
+  html += '</div></div>';
+  document.getElementById('revContent').innerHTML = html;
+}
+
+// ──────────────────────────────────────────────────────
+// SAVE
+// ──────────────────────────────────────────────────────
+async function saveInspection() {
+  const now = new Date();
+  const rec = { ...answers, savedAt: now.toISOString(),
+    savedAtDisplay: now.toLocaleString('en-AU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) };
+  try {
+    await dbAdd(rec);
+    await updateCount();
+    showToast('✅ Saved!', true);
+    setTimeout(()=>goTab('home'), 1200);
+  } catch(e) { showToast('Save failed: ' + e.message, false); }
+}
+
+// ──────────────────────────────────────────────────────
+// RECORDS
+// ──────────────────────────────────────────────────────
+async function loadRecords() {
+  const records = (await dbAll()).sort((a,b)=>new Date(b.savedAt)-new Date(a.savedAt));
+  const el = document.getElementById('recContent');
+  if (!records.length) {
+    el.innerHTML = `<div class="empty"><div class="ei">📋</div><p>No inspections saved yet.</p></div>`;
+    return;
+  }
+  let html = `<div class="tbl-wrap"><table><thead><tr>
+    <th>ID</th><th>Paddock</th><th>Grower</th><th>Date</th><th>Visit</th><th>China?</th><th>Saved</th><th></th>
+  </tr></thead><tbody>`;
+  records.forEach(r=>{
+    const china = r.recommendChina==='Y'?'✅':r.recommendChina==='N'?'❌':'—';
+    html+=`<tr>
+      <td>${r.id}</td><td><strong>${r.paddockName||'—'}</strong></td>
+      <td>${r.growerName||'—'}</td><td>${r.inspectionDate||'—'}</td>
+      <td>${r.visitNumber||'—'}</td><td>${china}</td>
+      <td>${r.savedAtDisplay||'—'}</td>
+      <td><button class="del-btn" onclick="delRec(${r.id})">🗑</button></td>
+    </tr>`;
+  });
+  el.innerHTML = html + '</tbody></table></div>';
+}
+
+async function delRec(id) {
+  if (!confirm('Delete this record?')) return;
+  await dbDel(id); await updateCount(); loadRecords(); showToast('Deleted',false);
+}
+async function confirmClearAll() {
+  if (!confirm('Delete ALL records? Cannot be undone.')) return;
+  await dbClear(); await updateCount(); loadRecords(); showToast('All records cleared',false);
+}
+async function updateCount() {
+  const r = await dbAll();
+  document.getElementById('recCount').textContent = r.length ? `(${r.length})` : '';
+}
+
+// ──────────────────────────────────────────────────────
+// EXPORT CSV
+// ──────────────────────────────────────────────────────
+async function exportCSV() {
+  const recs = await dbAll();
+  if (!recs.length) { showToast('No records to export',false); return; }
+  const headers = ['ID',...QUESTIONS.map(q=>q.label),'Saved At'];
+  const rows = recs.map(r=>[r.id,...QUESTIONS.map(q=>`"${(r[q.id]||'').replace(/"/g,'""')}"`),`"${r.savedAtDisplay||''}"`]);
+  const csv  = [headers.join(','),...rows.map(r=>r.join(','))].join('\n');
+  const a    = Object.assign(document.createElement('a'),{
+    href: URL.createObjectURL(new Blob([csv],{type:'text/csv'})),
+    download: `agent-paddy-${new Date().toISOString().slice(0,10)}.csv`
+  });
+  a.click(); showToast('📊 CSV downloaded!',true);
+}
+
+// ──────────────────────────────────────────────────────
+// MANUAL INPUT
+// ──────────────────────────────────────────────────────
+function toggleManual() { document.getElementById('manualRow').classList.toggle('show'); }
+function sendManual() {
+  const val = document.getElementById('manualInput').value.trim();
+  if (!val) return;
+  document.getElementById('manualInput').value = '';
+  document.getElementById('manualRow').classList.remove('show');
+  processUserAnswer(val);
+}
+
+// ──────────────────────────────────────────────────────
+// TAB NAVIGATION
+// ──────────────────────────────────────────────────────
+function goTab(tab) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+
+  document.getElementById('screen-' + tab).classList.add('active');
+  document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
+
+  // chat screen needs flex
+  const cs = document.getElementById('chatScreen');
+  cs.classList.toggle('active', tab === 'voice');
+  if (tab === 'records') loadRecords();
+}
+
+// ──────────────────────────────────────────────────────
+// TOAST
+// ──────────────────────────────────────────────────────
+function showToast(msg, ok=true) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast' + (ok?' success':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+// ──────────────────────────────────────────────────────
+// iOS INSTALL BANNER
+// ──────────────────────────────────────────────────────
+function checkInstallPrompt() {
+  const isIOS       = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone;
+  const dismissed    = localStorage.getItem('paddy_install_dismissed');
+  if (isIOS && !isStandalone && !dismissed) {
+    document.getElementById('installBanner').classList.add('show');
+    document.getElementById('installBanner').querySelector('.install-close')
+      .addEventListener('click', ()=>localStorage.setItem('paddy_install_dismissed','1'));
+  }
+}
+
+// ──────────────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────────────
+initDB().then(()=>{ updateCount(); checkInstallPrompt(); });
+</script>
+</body>
+</html>
