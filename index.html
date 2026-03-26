@@ -708,9 +708,12 @@ function askCurrentQuestion() {
   // Add Paddy message
   addMsg('paddy', `<strong>${q.label}</strong><br>${txt}`);
 
-  // Speak it
+  // Speak then auto-start mic — fully hands-free
   setMicState('idle');
-  speak(txt, () => setMicState('ready'));
+  speak(txt, () => {
+    setMicState('ready');
+    setTimeout(() => startMic(), 500);
+  });
 }
 
 function setMicState(state) {
@@ -727,7 +730,7 @@ function setMicState(state) {
     btn.disabled = true;
   } else if (state === 'ready') {
     btn.className = 'mic-btn'; btn.textContent = '🎤';
-    status.className = 'mic-status'; status.textContent = 'Tap the mic to answer';
+    status.className = 'mic-status'; status.textContent = 'Starting mic…';
   } else if (state === 'listening') {
     btn.className = 'mic-btn listening'; btn.textContent = '⏹';
     status.className = 'mic-status listening'; status.textContent = 'Listening… tap to stop';
